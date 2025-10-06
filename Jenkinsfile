@@ -85,7 +85,7 @@ pipeline {
         withCredentials([sshUserPrivateKey(credentialsId: 'ansible-ssh-key', keyFileVariable: 'SSH_KEYFILE')]) {
           sh '''
             chmod 600 $SSH_KEYFILE
-            ansible-playbook -i inventory.ini -u ubuntu --private-key $SSH_KEYFILE ansible/playbook.yml
+            ansible-playbook -i inventory.ini --private-key $SSH_KEYFILE ansible/playbook.yml
           '''
         }
       }
