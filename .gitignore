@@ -11,6 +11,7 @@ override.tf.json
 *_override.tf.json
 .terraform.lock.hcl
 tf_output.json
+backend.hcl
 # Ansible
 *.retry
 inventory.ini

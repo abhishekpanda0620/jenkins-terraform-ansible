@@ -21,10 +21,10 @@ resource "aws_security_group" "ssh_http" {
 }
 
 resource "aws_instance" "web" {
-  count         = var.instance_count
-  ami           = var.ami
-  instance_type = var.instance_type
-  key_name      = var.key_name
+  count                  = var.instance_count
+  ami                    = var.ami
+  instance_type          = var.instance_type
+  key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.ssh_http.id]
-  tags = { Name = "jenkins-terraform-ansible-${count.index}" }
+  tags                   = { Name = "jenkins-terraform-ansible-${count.index}" }
 }

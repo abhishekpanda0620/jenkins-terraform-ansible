@@ -14,7 +14,7 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 variable "key_name" {
-  description = "Key pair name for SSH access"  
+  description = "Key pair name for SSH access"
   type        = string
   default     = "my-key-pair"
 }
