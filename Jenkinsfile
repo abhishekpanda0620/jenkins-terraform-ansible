@@ -59,7 +59,7 @@ pipeline {
           sh '''
             cd $TF_DIR
             terraform apply -auto-approve plan.tfplan
-            terraform output -json > ../tf_output.json
+            terraform output -json > tf_output.json
             cd ..
           '''
         }
@@ -70,12 +70,13 @@ pipeline {
       steps {
         sh '''
       echo "Listing Terraform output file:"
-      ls -l ../tf_output.json
-      cat ../tf_output.json || true
+      cd $TF_DIR
+      ls -l tf_output.json
+      cat tf_output.json || true
       echo "Checking Python availability..."
       which python3 || echo "Python3 not found!"
       python3 --version || echo "Python command failed"
-      python3 scripts/tf_to_inventory.py
+      python3 ../scripts/tf_to_inventory.py
       ls -l inventory.ini
       cat inventory.ini || true
     '''
