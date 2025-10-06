@@ -10,10 +10,10 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 .terraform.lock.hcl
-
+tf_output.json
 # Ansible
 *.retry
-
+inventory.ini
 # IDE / Editor specific
 .vscode/
 .idea/
