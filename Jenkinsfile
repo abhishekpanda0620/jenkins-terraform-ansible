@@ -69,21 +69,22 @@ pipeline {
     stage('Generate Inventory') {
       steps {
         sh '''
-          echo "=== Terraform Output ==="
-          cd $TF_DIR
-          ls -l tf_output.json
-          cat tf_output.json
-
           echo "=== Generating Ansible Inventory ==="
-          python3 ../scripts/tf_to_inventory.py
+          cd $TF_DIR
+
+          # Option 1: Use the Python script
+          python3 ../scripts/tf_to_inventory.py || {
+            echo "Python script failed, generating inventory manually..."
+            sed -i '1i[web]' inventory.ini
+          }
 
           echo "=== Inventory Created ==="
-          ls -l inventory.ini
           cat inventory.ini
 
-          # Copy inventory to workspace root for Ansible stage
+          # Copy to workspace root
           cp inventory.ini ../inventory.ini
           cd ..
+          cat inventory.ini
         '''
       }
     }
@@ -102,11 +103,6 @@ pipeline {
       }
     }
 
-    stage('Smoke Test') {
-      steps {
-        echo 'Add simple curl checks here (optional).'
-      }
-    }
   }
 
   post {
