@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   environment {
-    TF_DIR = "terraform"
-    ANSIBLE_DIR = "ansible"
+    TF_DIR = 'terraform'
+    ANSIBLE_DIR = 'ansible'
   }
 
   stages {
@@ -44,12 +44,6 @@ pipeline {
       }
     }
 
-    stage('Manual Approval') {
-      steps {
-        input message: "Apply Terraform plan to create infra?", ok: "Apply"
-      }
-    }
-
     stage('Terraform Apply') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'aws-keys', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -66,10 +60,13 @@ pipeline {
     stage('Generate Inventory') {
       steps {
         sh '''
-          python3 scripts/tf_to_inventory.py
-          ls -l inventory.ini tf_output.json
-          cat inventory.ini || true
-        '''
+      echo "Listing Terraform output file:"
+      ls -l ../tf_output.json
+      cat ../tf_output.json || true
+      python3 scripts/tf_to_inventory.py
+      ls -l inventory.ini
+      cat inventory.ini || true
+    '''
       }
     }
 
@@ -87,7 +84,7 @@ pipeline {
 
     stage('Smoke Test') {
       steps {
-        echo "Add simple curl checks here (optional)."
+        echo 'Add simple curl checks here (optional).'
       }
     }
   }
