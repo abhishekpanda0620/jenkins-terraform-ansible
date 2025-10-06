@@ -72,6 +72,9 @@ pipeline {
       echo "Listing Terraform output file:"
       ls -l ../tf_output.json
       cat ../tf_output.json || true
+      echo "Checking Python availability..."
+      which python3 || echo "Python3 not found!"
+      python3 --version || echo "Python command failed"
       python3 scripts/tf_to_inventory.py
       ls -l inventory.ini
       cat inventory.ini || true
