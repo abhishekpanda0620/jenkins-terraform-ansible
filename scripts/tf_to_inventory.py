@@ -38,8 +38,8 @@ print(f"Found IPs: {ips}")
 with open("inventory.ini", "w") as f:
     f.write("[web]\n")
     for ip in ips:
-        # Change ansible_user if needed (ubuntu/ec2-user/admin)
-        f.write(f"{ip} ansible_user=admin\n")
+        # Using 'admin' for Debian instances
+        f.write(f"{ip} ansible_user=admin ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'\n")
 
 print("Successfully wrote inventory.ini")
 print("Inventory contents:")
