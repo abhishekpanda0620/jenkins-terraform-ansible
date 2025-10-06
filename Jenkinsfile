@@ -28,7 +28,6 @@ pipeline {
         sh '''
           cd $TF_DIR
           terraform fmt -check || true
-          terraform init -backend-config=backend.hcl
           terraform validate || true
           cd ..
           # optional: ansible-lint
@@ -44,7 +43,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'aws-keys', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           sh '''
             cd $TF_DIR
-            terraform init
+            terraform init -backend-config=backend.hcl
             terraform plan -out=plan.tfplan
             terraform show -json plan.tfplan > plan.json || true
             cd ..
