@@ -12,13 +12,28 @@ pipeline {
         checkout scm
       }
     }
+    stage('setup backend.hcl') {
+      withCredentials([string(credentialsId: 's3-bucket-name', variable: 'S3_BUCKET_NAME')]) {
+        withCredentials([string(credentialsId: 'aws-region', variable: 'AWS_REGION')]) {
+          steps {
+            sh '''
+              cd $TF_DIR
+              echo "bucket         = \\"${S3_BUCKET_NAME}\\"" > backend.hcl
+              echo "region         = \\"${AWS_REGION}\\"" >> backend.hcl
+              terraform init -backend-config=backend.hcl
+              cd ..
+            '''
+          }
+        }
+      }
+    }
 
     stage('Lint & Validate') {
       steps {
         sh '''
           cd $TF_DIR
           terraform fmt -check || true
-          terraform init 
+          terraform init -backend-config=backend.hcl
           terraform validate || true
           cd ..
           # optional: ansible-lint
@@ -34,8 +49,8 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'aws-keys', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           sh '''
             cd $TF_DIR
-            terraform init 
-            terraform plan -out=plan.tfplan 
+            terraform init
+            terraform plan -out=plan.tfplan
             terraform show -json plan.tfplan > plan.json || true
             cd ..
             # expose plan as artifact logs if you want
