@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = var.s3_bucket_name
-    key    = "terraform.tfstate"
-    region = var.aws_region
     use_lockfile = true
+    bucket      = "jenkins-terraform-ansible-0610"
+    key         = "terraform.tfstate"
+    region      = "us-east-1"
   }
 }
