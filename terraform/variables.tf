@@ -18,7 +18,3 @@ variable "key_name" {
   type        = string
   default     = "my-key-pair"
 }
-variable "s3_bucket_name" {
-  description = "S3 bucket name for Terraform state"
-  type        = string
-}
