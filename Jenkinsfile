@@ -12,10 +12,19 @@ pipeline {
         checkout scm
       }
     }
+    stage('Install Python') {
+      steps {
+        sh '''
+      sudo apt-get update -y
+      sudo apt-get install -y python3 python3-pip
+    '''
+      }
+    }
+
     stage('setup backend.hcl') {
       steps {
         withCredentials([file(credentialsId: 'BACKEND_SECRET', variable: 'BACKEND_FILE')]) {
-        sh '''
+          sh '''
         cp "${BACKEND_FILE}" "${TF_DIR}/backend.hcl"
         cat "${TF_DIR}/backend.hcl"
         '''
