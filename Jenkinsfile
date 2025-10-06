@@ -4,6 +4,8 @@ pipeline {
   environment {
     TF_DIR = 'terraform'
     ANSIBLE_DIR = 'ansible'
+    TF_VAR_s3_bucket_name = "${S3_BUCKET_NAME}"
+
   }
 
   stages {
