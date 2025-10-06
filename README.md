@@ -7,7 +7,6 @@ This project demonstrates a CI/CD pipeline using Jenkins to provision infrastruc
 - **Infrastructure as Code:** Uses Terraform to define and manage AWS resources.
 - **Configuration Management:** Uses Ansible to configure the provisioned servers.
 - **CI/CD Pipeline:** Automates the entire process from linting and validation to deployment.
-- **Manual Approval:** Includes a manual approval step before applying infrastructure changes.
 - **Dynamic Inventory:** Generates an Ansible inventory file from the Terraform output.
 
 ## Prerequisites
@@ -43,6 +42,7 @@ The pipeline will:
 ```
 .
 ├── Jenkinsfile
+├── .gitignore
 ├── ansible
 │   └── playbook.yml
 ├── scripts
@@ -51,7 +51,9 @@ The pipeline will:
     ├── main.tf
     ├── outputs.tf
     ├── provider.tf
-    └── variables.tf
+    ├── variables.tf
+    └── backend.tf
+    
 ```
 
 - `Jenkinsfile`: The Jenkins pipeline definition.
@@ -61,6 +63,7 @@ The pipeline will:
 - `terraform/outputs.tf`: Defines the output variables from Terraform.
 - `terraform/provider.tf`: Configures the AWS provider for Terraform.
 - `terraform/variables.tf`: Defines the input variables for Terraform.
+- `terraform/backend.tf`: Defines the s3 backend to lock state in remote for Terraform.
 
 ## Manual Local Execution
 
