@@ -14,16 +14,8 @@ pipeline {
     }
     stage('setup backend.hcl') {
       steps {
-      withCredentials([string(credentialsId: 's3-bucket-name', variable: 'S3_BUCKET_NAME')]) {
-        withCredentials([string(credentialsId: 'aws-region', variable: 'AWS_REGION')]) { 
-            sh '''
-              cd $TF_DIR
-              echo "bucket         = \\"${S3_BUCKET_NAME}\\"" > backend.hcl
-              echo "region         = \\"${AWS_REGION}\\"" >> backend.hcl
-              terraform init -backend-config=backend.hcl
-              cd ..
-            '''
-          }
+        withCredentials([file(credentialsId: 'BACKEND_SECRET', variable: 'backend.hcl')]) {
+          sh 'cp $backend.hcl $TF_DIR/backend.hcl'
         }
       }
     }
