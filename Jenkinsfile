@@ -31,7 +31,7 @@ pipeline {
 
     stage('Terraform Plan') {
       steps {
-        withAWS(credentials: 'aws-keys', region: 'us-east-1') {
+        withCredentials([usernamePassword(credentialsId: 'aws-keys', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           sh '''
             cd $TF_DIR
             terraform init -input=false
@@ -52,7 +52,7 @@ pipeline {
 
     stage('Terraform Apply') {
       steps {
-        withAWS(credentials: 'aws-keys', region: 'us-east-1') {
+        withCredentials([usernamePassword(credentialsId: 'aws-keys', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           sh '''
             cd $TF_DIR
             terraform apply -auto-approve plan.tfplan
