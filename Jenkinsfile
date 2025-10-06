@@ -72,11 +72,14 @@ pipeline {
           echo "=== Generating Ansible Inventory ==="
           cd $TF_DIR
 
-          # Option 1: Use the Python script
-          python3 ../scripts/tf_to_inventory.py || {
-            echo "Python script failed, generating inventory manually..."
-            sed -i '1i[web]' inventory.ini
-          }
+          echo "=== Files in terraform directory ==="
+          ls -la
+
+          echo "=== Contents of tf_output.json ==="
+          cat tf_output.json
+
+          echo "=== Running Python script ==="
+          python3 ../scripts/tf_to_inventory.py
 
           echo "=== Inventory Created ==="
           cat inventory.ini
@@ -84,6 +87,8 @@ pipeline {
           # Copy to workspace root
           cp inventory.ini ../inventory.ini
           cd ..
+
+          echo "=== Final inventory at workspace root ==="
           cat inventory.ini
         '''
       }
@@ -102,7 +107,6 @@ pipeline {
         }
       }
     }
-
   }
 
   post {

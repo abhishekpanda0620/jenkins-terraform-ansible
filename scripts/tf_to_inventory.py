@@ -1,22 +1,30 @@
 #!/usr/bin/env python3
-import json, subprocess, sys, os
+import json
+import sys
+import os
 
 print(f"Current working directory: {os.getcwd()}")
 print(f"Files in directory: {os.listdir('.')}")
 
-# Get terraform JSON output for 'web_public_ips'
-print("Running: terraform output -json")
-proc = subprocess.run(["terraform", "output", "-json"], capture_output=True, text=True)
+# Read from tf_output.json instead of running terraform command
+tf_output_file = "tf_output.json"
 
-if proc.returncode != 0:
-    print(f"Terraform command failed with return code: {proc.returncode}", file=sys.stderr)
-    print(f"STDOUT: {proc.stdout}", file=sys.stderr)
-    print(f"STDERR: {proc.stderr}", file=sys.stderr)
+if not os.path.exists(tf_output_file):
+    print(f"Error: {tf_output_file} not found!", file=sys.stderr)
     sys.exit(1)
 
-print(f"Terraform output: {proc.stdout}")
+print(f"Reading from {tf_output_file}")
 
-data = json.loads(proc.stdout)
+try:
+    with open(tf_output_file, 'r') as f:
+        data = json.load(f)
+    print(f"Successfully loaded {tf_output_file}")
+    print(f"Content: {json.dumps(data, indent=2)}")
+except Exception as e:
+    print(f"Error reading {tf_output_file}: {e}", file=sys.stderr)
+    sys.exit(1)
+
+# Extract IPs - handle the structure from tf_output.json
 ips = data.get("web_public_ips", {}).get("value", [])
 
 if not ips:
@@ -26,13 +34,14 @@ if not ips:
 
 print(f"Found IPs: {ips}")
 
+# Generate inventory file
 with open("inventory.ini", "w") as f:
     f.write("[web]\n")
     for ip in ips:
-        # change ansible_user if needed (ubuntu/ec2-user)
-        f.write(f"{ip} ansible_user=admin\n")
+        # Change ansible_user if needed (ubuntu/ec2-user/admin)
+        f.write(f"{ip} ansible_user=ubuntu\n")
 
-print("Wrote inventory.ini")
+print("Successfully wrote inventory.ini")
 print("Inventory contents:")
 with open("inventory.ini", "r") as f:
     print(f.read())
