@@ -4,8 +4,6 @@ pipeline {
   environment {
     TF_DIR = 'terraform'
     ANSIBLE_DIR = 'ansible'
-    TF_VAR_s3_bucket_name = "${S3_BUCKET_NAME}"
-
   }
 
   stages {
@@ -20,7 +18,7 @@ pipeline {
         sh '''
           cd $TF_DIR
           terraform fmt -check || true
-          terraform init -input=false
+          terraform init 
           terraform validate || true
           cd ..
           # optional: ansible-lint
@@ -36,8 +34,8 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'aws-keys', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
           sh '''
             cd $TF_DIR
-            terraform init -input=false
-            terraform plan -out=plan.tfplan -input=false
+            terraform init 
+            terraform plan -out=plan.tfplan 
             terraform show -json plan.tfplan > plan.json || true
             cd ..
             # expose plan as artifact logs if you want
