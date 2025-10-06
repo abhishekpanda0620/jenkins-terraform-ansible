@@ -14,8 +14,11 @@ pipeline {
     }
     stage('setup backend.hcl') {
       steps {
-        withCredentials([file(credentialsId: 'BACKEND_SECRET', variable: 'backend.hcl')]) {
-          sh 'cp $backend.hcl $TF_DIR/backend.hcl'
+        withCredentials([file(credentialsId: 'BACKEND_SECRET', variable: 'BACKEND_FILE')]) {
+        sh '''
+        cp "${BACKEND_FILE}" "${TF_DIR}/backend.hcl"
+        cat "${TF_DIR}/backend.hcl"
+        '''
         }
       }
     }
