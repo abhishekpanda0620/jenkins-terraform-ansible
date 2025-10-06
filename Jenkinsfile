@@ -13,9 +13,9 @@ pipeline {
       }
     }
     stage('setup backend.hcl') {
+      steps {
       withCredentials([string(credentialsId: 's3-bucket-name', variable: 'S3_BUCKET_NAME')]) {
-        withCredentials([string(credentialsId: 'aws-region', variable: 'AWS_REGION')]) {
-          steps {
+        withCredentials([string(credentialsId: 'aws-region', variable: 'AWS_REGION')]) { 
             sh '''
               cd $TF_DIR
               echo "bucket         = \\"${S3_BUCKET_NAME}\\"" > backend.hcl
