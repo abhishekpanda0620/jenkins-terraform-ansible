@@ -12,14 +12,6 @@ pipeline {
         checkout scm
       }
     }
-    stage('Install Python') {
-      steps {
-        sh '''
-      sudo apt-get update -y
-      sudo apt-get install -y python3 python3-pip
-    '''
-      }
-    }
 
     stage('setup backend.hcl') {
       steps {
@@ -56,7 +48,6 @@ pipeline {
             terraform plan -out=plan.tfplan
             terraform show -json plan.tfplan > plan.json || true
             cd ..
-            # expose plan as artifact logs if you want
           '''
         }
       }
@@ -78,27 +69,34 @@ pipeline {
     stage('Generate Inventory') {
       steps {
         sh '''
-      echo "Listing Terraform output file:"
-      cd $TF_DIR
-      ls -l tf_output.json
-      cat tf_output.json || true
-      echo "Checking Python availability..."
-      which python3 || echo "Python3 not found!"
-      python3 --version || echo "Python command failed"
-      python3 ../scripts/tf_to_inventory.py
-      ls -l inventory.ini
-      cat inventory.ini || true
-    '''
+          echo "=== Terraform Output ==="
+          cd $TF_DIR
+          ls -l tf_output.json
+          cat tf_output.json
+
+          echo "=== Generating Ansible Inventory ==="
+          python3 ../scripts/tf_to_inventory.py
+
+          echo "=== Inventory Created ==="
+          ls -l inventory.ini
+          cat inventory.ini
+
+          # Copy inventory to workspace root for Ansible stage
+          cp inventory.ini ../inventory.ini
+          cd ..
+        '''
       }
     }
 
     stage('Ansible Configure') {
       steps {
-        // SSH key stored in Jenkins as "SSH Username with private key" credential type
         withCredentials([sshUserPrivateKey(credentialsId: 'ansible-ssh-key', keyFileVariable: 'SSH_KEYFILE')]) {
           sh '''
             chmod 600 $SSH_KEYFILE
-            ansible-playbook -i inventory.ini --private-key $SSH_KEYFILE ansible/playbook.yml
+            echo "=== Using Inventory ==="
+            cat inventory.ini
+            echo "=== Running Ansible Playbook ==="
+            ansible-playbook -i inventory.ini --private-key $SSH_KEYFILE $ANSIBLE_DIR/playbook.yml
           '''
         }
       }
