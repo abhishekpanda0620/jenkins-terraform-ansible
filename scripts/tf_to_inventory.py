@@ -39,7 +39,7 @@ with open("inventory.ini", "w") as f:
     f.write("[web]\n")
     for ip in ips:
         # Change ansible_user if needed (ubuntu/ec2-user/admin)
-        f.write(f"{ip} ansible_user=ubuntu\n")
+        f.write(f"{ip} ansible_user=admin\n")
 
 print("Successfully wrote inventory.ini")
 print("Inventory contents:")
