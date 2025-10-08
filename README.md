@@ -28,6 +28,7 @@ Before you can run this pipeline, you'll need the following:
 5. **Run the pipeline.**
 
 The pipeline will:
+
 1. Checkout the code.
 2. Lint and validate the Terraform and Ansible code.
 3. Create a Terraform plan.
@@ -53,7 +54,7 @@ The pipeline will:
     ├── provider.tf
     ├── variables.tf
     └── backend.tf
-    
+
 ```
 
 - `Jenkinsfile`: The Jenkins pipeline definition.
@@ -79,12 +80,14 @@ You can also run the Terraform and Ansible scripts manually from your local mach
 ### Steps
 
 1.  **Clone the repository:**
+
     ```bash
     git clone https://github.com/abhishekpanda0620/jenkins-terraform-ansible.git
     cd jenkins-terraform-ansible
     ```
 
 2.  **Provision infrastructure with Terraform:**
+
     - Navigate to the Terraform directory:
       ```bash
       cd terraform
@@ -106,21 +109,24 @@ You can also run the Terraform and Ansible scripts manually from your local mach
       terraform apply -auto-approve
       ```
     - Get the output in JSON format:
-        ```bash
-        terraform output -json > ../tf_output.json
-        cd ..
-        ```
+      ```bash
+      terraform output -json > ../tf_output.json
+      cd ..
+      ```
 
 3.  **Generate Ansible Inventory:**
+
     ```bash
     python3 scripts/tf_to_inventory.py
     ```
 
 4.  **Configure servers with Ansible:**
     Make sure you are in the root directory of the project.
+
     ```bash
     ansible-playbook -i inventory.ini --private-key /path/to/your/private/key ansible/playbook.yml
     ```
+
     Replace `/path/to/your/private/key` with the actual path to your private SSH key.
 
 5.  **Destroy the infrastructure:**
